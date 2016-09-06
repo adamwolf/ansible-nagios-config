@@ -1,13 +1,17 @@
-# Hosts.
-- name: create hosts.cfg
+- name: Install config files
   sudo: true
   notify: restart nagios
   template: >
-    src=hosts.cfg.j2
-    dest=/usr/local/nagios/etc/objects/hosts.cfg
-    owner=nagios
-    group=nagios
-    mode=640
+    src={{item.src}}
+    dest={{nagios_object_dir}}/{{item.dest}}
+    owner={{nagios_user}}
+    group={{nagios_group}}
+  with_items:
+    - { src: hosts.cfg.j2, dest: hosts.cfg }
+    - { src: hostgroups.cfg.j2, dest: hostgroups.cfg }
+    - { src: services.cfg.j2, dest: services.cfg }
+    - { src: commands.cfg.j2, dest: additional_commands.cfg }
+    - { src: contacts.cfg.j2, dest: contacts.cfg }
 
 - name: load hosts.cfg
   sudo: true
@@ -17,17 +21,6 @@
     line="cfg_file=/usr/local/nagios/etc/objects/hosts.cfg"
     regexp="cfg_file\=/usr/local/nagios/etc/objects/hosts\.cfg"
 
-# Host Groups.
-- name: create hostgroups.cfg
-  sudo: true
-  notify: restart nagios
-  template: >
-    src=hostgroups.cfg.j2
-    dest=/usr/local/nagios/etc/objects/hostgroups.cfg
-    owner=nagios
-    group=nagios
-    mode=640
-
 - name: load hostgroups.cfg
   sudo: true
   notify: restart nagios
@@ -35,17 +28,6 @@
     dest=/usr/local/nagios/etc/nagios.cfg
     line="cfg_file=/usr/local/nagios/etc/objects/hostgroups.cfg"
     regexp="cfg_file\=/usr/local/nagios/etc/objects/hostgroups\.cfg"
-
-# Contacts.
-- name: create contacts.cfg
-  sudo: true
-  notify: restart nagios
-  template: >
-    src=contacts.cfg.j2
-    dest=/usr/local/nagios/etc/objects/contacts.cfg
-    owner=nagios
-    group=nagios
-    mode=640
 
 - name: load contacts.cfg
   sudo: true
@@ -55,17 +37,6 @@
     line="cfg_file=/usr/local/nagios/etc/objects/contacts.cfg"
     regexp="cfg_file\=/usr/local/nagios/etc/objects/contacts\.cfg"
 
-# Additional Commands
-- name: create additional_commands.cfg
-  sudo: true
-  notify: restart nagios
-  template: >
-    src=commands.cfg.j2
-    dest=/usr/local/nagios/etc/objects/additional_commands.cfg
-    owner=nagios
-    group=nagios
-    mode=640
-
 - name: load additional_commands.cfg
   sudo: true
   notify: restart nagios
@@ -74,18 +45,16 @@
     line="cfg_file=/usr/local/nagios/etc/objects/additional_commands.cfg"
     regexp="cfg_file\=/usr/local/nagios/etc/objects/additional_commands\.cfg"
 
-# Services.
-- name: create services.cfg
+- name: load services.cfg
   sudo: true
   notify: restart nagios
-  template: >
-    src=services.cfg.j2
-    dest=/usr/local/nagios/etc/objects/services.cfg
-    owner=nagios
-    group=nagios
-    mode=640
+  lineinfile: >
+    dest=/usr/local/nagios/etc/nagios.cfg
+    line="cfg_file=/usr/local/nagios/etc/objects/services.cfg"
+    regexp="cfg_file\=/usr/local/nagios/etc/objects/services\.cfg"
 
-- name: load services.cfg
+
+- name: setup cfg_dir
   sudo: true
   notify: restart nagios
   lineinfile: >
