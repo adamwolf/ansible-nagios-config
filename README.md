@@ -5,6 +5,25 @@ Before going any further, this role is designed to be run on servers that
 have been provisioned using the npm [Nagios Role](http://github.com/npm/ansible-nagios).
 Provision a new server using this role.
 
+Notes
+----
+
+* I suspect that the directive to bring in cfg_dir doesn't work fully.
+* I set up a directory for SSH ControlMaster.  You can use something like the following:
+
+```
+nagios_hosts
+  - name: 'echo'
+    address: '192.168.17.21'
+    linux: true
+    checks:
+      - {description: 'Load', command: "check_load_by_ssh!3.0,3.0,3.0!5.0,5.0,5.0"}
+
+nagios_commands:
+  - {name: 'check_load_by_ssh', command: "$USER1$/check_by_ssh -o ControlMaster=auto -o ControlPath=/usr/local/nagios/.ssh/controlmaster/$HOSTNAME$ -o ControlPersist=yes -H $HOSTADDRESS$ -n $HOSTNAME$ -C '/usr/lib/nagios/plugins/check_load -w $ARG1$ -c $ARG2$'"}
+```
+
+
 What is This?
 ------------
 
