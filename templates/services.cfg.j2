@@ -1,5 +1,5 @@
 {% for host_group in nagios_host_groups %}
-{% if 'checks' in host_group %}
+{% if host_group.checks is defined %}
 {% for check in host_group.checks %}
 define service {
   use  local-service;
@@ -11,11 +11,15 @@ define service {
 {% endif %}
 {% endfor %}
 
-{% for host_check in nagios_host_checks %}
+{% for host_name in nagios_hosts %}
+{% if host_name.checks is defined %}
+{% for check in host_name.checks %}
 define service {
-  use  local-service;
-  host_name  {{host_check.name}};
-  service_description  {{host_check.description}};
-  check_command  {{host_check.command}};
+  use local-service;
+  host_name {{host_name.name}};
+  service_description {{check.description}};
+  check_command {{check.command}};
 }
+{% endfor %}
+{% endif %}
 {% endfor %}
