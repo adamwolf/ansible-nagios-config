@@ -1,5 +1,5 @@
 - name: copy nagios vhost
-  sudo: true
+  become: true
   template: >
     src=nagios.vhost.j2
     dest=/etc/apache2/sites-available/nagios.conf
@@ -9,5 +9,5 @@
   when: not (legacy | default(false))
 
 - name: enable nagios vhost
-  sudo: true
+  become: true
   command: "a2ensite nagios"
