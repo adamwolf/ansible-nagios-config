@@ -75,6 +75,12 @@
   include: ses.yml
   when: nagios_enable_ses_notifications
 
+# Slack
+- name: configure slack
+  tasks:
+  include: slack.yml
+  when: nagios_enable_slack_notifications
+
 # Apache VHOST for Nagios
 - name: configure apache nagios vhost
   tasks: 
