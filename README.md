@@ -111,3 +111,18 @@ nagios_contactgroups:
   - {name: 'contactgroupname', alias: 'The Contact Group Name', members: 'members,of,the,contactgroup"}
 ```
 
+Enabling Slack
+--------------
+Set the variable nagios_enable_slack_notifications to True.  Set nagios_slack_domain to the domain, and set nagios_slack_token to the appropriate token. You almost
+certainly want to put the token in an Ansible vault.  Set nagios_slack_service_channel to the channel you want service alerts posted to, and nagios_slack_host_channel
+to the channel you want host alerts posted to.
+
+Then, set it up in your contacts and contactgroup.  One way is like this:
+```
+nagios_contacts:
+  - {name: 'nagiosadmin', shortname: 'nagiosadmin', alias: 'Nagios Admin', email: "whatever@example.com"}
+
+nagios_contactgroups:
+  - {name: 'admins', alias: 'Nagios Admins', members: 'slack,nagiosadmin'}
+```
+

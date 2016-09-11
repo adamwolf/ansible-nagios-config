@@ -1,0 +1,25 @@
+- name: copy slack contact
+  become: true
+  template: >
+    src=slack_nagios.cfg.j2
+    dest=/usr/local/nagios/etc/objects/slack_nagios.cfg
+    owner=nagios
+    group=nagios
+    mode=640
+
+- name: copy slack script
+  become: true
+  template: >
+    src=slack_nagios.pl
+    dest=/usr/local/bin/slack_nagios.pl
+    owner=nagios
+    group=nagios
+    mode=750
+
+- name: add slack contact to nagios.cfg
+  become: true
+  lineinfile: >
+    dest=/usr/local/nagios/etc/nagios.cfg
+    line="cfg_file=/usr/local/nagios/etc/objects/slack_nagios.cfg"
+    regexp="cfg_file\=/usr/local/nagios/etc/objects/slack_nagios\.cfg"
+
