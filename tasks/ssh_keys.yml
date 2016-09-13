@@ -22,3 +22,13 @@
   become_user: nagios
   with_items: ssh_known_host_results.results
   when: item.stdout == ""
+
+- name: Setup nagios user ssh key
+  become: true
+  become_user: nagios
+  copy: >
+    content="{{ nagios_ssh_key }}"
+    dest=/usr/local/nagios/.ssh/id_rsa
+    owner=nagios
+    group=nagios
+    mode=600
