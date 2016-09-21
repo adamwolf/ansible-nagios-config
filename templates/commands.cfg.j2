@@ -4,3 +4,8 @@ define command {
   command_line  {{command.command}}
 }
 {% endfor %}
+
+define command {
+    command_name check-http-alive
+    command_line $USER1$/check_http -H $HOSTADDRESS
+}
