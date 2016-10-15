@@ -1,8 +1,20 @@
+define service{
+        name                            daily-service           ; The name of this service template
+        use                             generic-service         ; Inherit default values from the generic-service definition
+        normal_check_interval           1440                    ; Check the service every 1440 minutes under normal conditions
+        notification_interval           720                     ; Re-notify about service problems twice a day
+        register                        0                       ; DONT REGISTER THIS DEFINITION - ITS NOT A REAL SERVICE, JUST A TEMPLATE!
+}
+
 {% for host_group in nagios_host_groups %}
 {% if host_group.checks is defined %}
 {% for check in host_group.checks %}
 define service {
+  {% if check.service_name is defined %} 
+  use  {{ check.service_name }};
+  {% else %}
   use  local-service;
+  {% endif %}
   hostgroup_name  {{host_group.name}};
   service_description  {{check.description}};
   check_command  {{check.command}};
@@ -15,7 +27,11 @@ define service {
 {% if host_name.checks is defined %}
 {% for check in host_name.checks %}
 define service {
-  use local-service;
+  {% if check.service_name is defined %} 
+  use  {{ check.service_name }};
+  {% else %}
+  use  local-service;
+  {% endif %}
   host_name {{host_name.name}};
   service_description {{check.description}};
   check_command {{check.command}};
@@ -23,3 +39,5 @@ define service {
 {% endfor %}
 {% endif %}
 {% endfor %}
+
+
