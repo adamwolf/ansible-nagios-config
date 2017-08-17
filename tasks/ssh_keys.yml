@@ -8,19 +8,19 @@
   become: true
   file: path=/usr/local/nagios/.ssh/known_hosts state=touch
 
-- name: Check host name availability
+- name: See which hostnames we already have SSH keys for
   shell: "ssh-keygen -f /usr/local/nagios/.ssh/known_hosts  -F {{ item }}"
   become: true
   become_user: nagios
-  with_items: nagios_ssh_clients
+  with_items: "{{nagios_ssh_clients}}"
   register: ssh_known_host_results
   ignore_errors: yes
 
-- name: Scan the public key
+- name: Get the SSH public key for anything we didn't have
   shell: "{{ ssh_known_hosts_command}} {{ item.item }} >> /usr/local/nagios/.ssh/known_hosts"
   become: true
   become_user: nagios
-  with_items: ssh_known_host_results.results
+  with_items: "{{ssh_known_host_results.results}}"
   when: item.stdout == ""
 
 - name: Setup nagios user ssh key
