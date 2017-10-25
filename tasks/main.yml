@@ -88,3 +88,4 @@
   notify: restart apache
 
 - include: ssh_keys.yml
+  when: nagios_ssh_hosts is defined
