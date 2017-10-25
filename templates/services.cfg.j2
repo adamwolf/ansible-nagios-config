@@ -6,6 +6,29 @@ define service{
         register                        0                       ; DONT REGISTER THIS DEFINITION - ITS NOT A REAL SERVICE, JUST A TEMPLATE!
 }
 
+define service{
+        name                            notify-in-morning-service           ; The name of this service template
+        use                             generic-service         ; Inherit default values from the generic-service definition
+        normal_check_interval           60                      ; Check the service every 60 minutes under normal conditions
+        notification_interval           25                     ; Re-notify about service problem every 25 minute
+        notification_period             mornings
+        register                        0                       ; DONT REGISTER THIS DEFINITION - ITS NOT A REAL SERVICE, JUST A TEMPLATE!
+}
+
+define timeperiod{
+	timeperiod_name		mornings
+	alias			Mornings			; Your notification interval probably has to be less than 30 minutes.
+	sunday			10:00-10:30			; Every Sunday of every week
+	monday			09:05-09:35
+	tuesday			09:05-09:35
+	wednesday		09:05-09:35
+	thursday		09:05-09:35
+	friday			09:05-09:35
+	saturday		10:00-10:30
+	}
+
+
+{% if nagios_host_groups is defined %}
 {% for host_group in nagios_host_groups %}
 {% if host_group.checks is defined %}
 {% for check in host_group.checks %}
@@ -22,6 +45,9 @@ define service {
 {% endfor %}
 {% endif %}
 {% endfor %}
+{% endif %}
+
+
 
 {% for host_name in nagios_hosts %}
 {% if host_name.checks is defined %}
@@ -39,5 +65,4 @@ define service {
 {% endfor %}
 {% endif %}
 {% endfor %}
-
 
